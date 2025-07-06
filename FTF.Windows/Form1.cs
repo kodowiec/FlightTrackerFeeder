@@ -28,7 +28,7 @@ namespace FTF.Windows
         {
             scs = new SimConnectSharp.SimConnectSharp();
             scs.Connect();
-            timer1.Interval = 1000;
+            timer1.Interval = 100;
             timer1.Enabled = true;
             timer1.Start();
         }
@@ -36,7 +36,7 @@ namespace FTF.Windows
         private void timer1_Tick(object sender, EventArgs e)
         {
             LocationData scslld = scs.LastLocationData;
-            if (!scslld.Equals(lastLocationData))
+            if (scslld != null && !scslld.Equals(lastLocationData))
             {
                 lastLocationData = scslld;
                 richTextBox1.Text = DateTime.Now + 
@@ -45,7 +45,7 @@ namespace FTF.Windows
                     "\n" +
                     $"Latitude: {lastLocationData.Latitude}" +
                     "\n" +
-                    $"Longtitude: {lastLocationData.Longitude}" +
+                    $"Longitude: {lastLocationData.Longitude}" +
                     "\n" +
                     $"Altitude: {lastLocationData.Altitude}" +
                     "\n" +
