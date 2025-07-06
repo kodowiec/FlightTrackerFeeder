@@ -1,0 +1,3 @@
+[submodule "submodules/SimConnectSharp"]
+	path = submodules/SimConnectSharp
+	url = https://github.com/kodowiec/SimConnectSharp.git
