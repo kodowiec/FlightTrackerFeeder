@@ -30,21 +30,27 @@ namespace FTF.Windows
             if (timer1.Enabled == false)
             {
                 scs = new SimConnectSharp.SimConnectSharp();
-                scs.Connect();
-                var calculatedInterval = (int)(numericUpDown2.Value * ((radioButton3.Checked)? 1000 : 20));
-                if (calculatedInterval == 0)
+                if (scs.Connect())
                 {
-                    calculatedInterval = (radioButton3.Checked) ? 1000 : 10;
+                    var calculatedInterval = (int)(numericUpDown2.Value * ((radioButton3.Checked) ? 1000 : 20));
+                    if (calculatedInterval == 0)
+                    {
+                        calculatedInterval = (radioButton3.Checked) ? 1000 : 10;
+                    }
+                    SimConnectSharp.SimConnectSharp.SC_PERIOD requestPeriod = SimConnectSharp.SimConnectSharp.SC_PERIOD.ONCE;
+                    if (radioButton1.Checked) requestPeriod = SimConnectSharp.SimConnectSharp.SC_PERIOD.VISUAL_FRAME;
+                    else if (radioButton2.Checked) requestPeriod = SimConnectSharp.SimConnectSharp.SC_PERIOD.SIM_FRAME;
+                    else if (radioButton3.Checked) requestPeriod = SimConnectSharp.SimConnectSharp.SC_PERIOD.SECOND;
+                    if (numericUpDown2.Value < 0) numericUpDown2.Value = 0;
+                    scs.SubscribeLocationData(requestPeriod, (uint)numericUpDown2.Value);
+                    timer1.Interval = calculatedInterval;
+                    timer1.Enabled = true;
+                    timer1.Start();
                 }
-                SimConnectSharp.SimConnectSharp.SC_PERIOD requestPeriod = SimConnectSharp.SimConnectSharp.SC_PERIOD.ONCE;
-                if (radioButton1.Checked) requestPeriod = SimConnectSharp.SimConnectSharp.SC_PERIOD.VISUAL_FRAME;
-                else if (radioButton2.Checked) requestPeriod = SimConnectSharp.SimConnectSharp.SC_PERIOD.SIM_FRAME;
-                else if (radioButton3.Checked) requestPeriod = SimConnectSharp.SimConnectSharp.SC_PERIOD.SECOND;
-                if (numericUpDown2.Value < 0) numericUpDown2.Value = 0;
-                scs.SubscribeLocationData(requestPeriod, (uint)numericUpDown2.Value);
-                timer1.Interval = calculatedInterval;
-                timer1.Enabled = true;
-                timer1.Start();
+                else
+                {
+                    MessageBox.Show("Couldn't connect to MSFS");
+                }
             }
             else
             {
@@ -53,21 +59,27 @@ namespace FTF.Windows
                 scs.UnsubscribeLocationData();
                 scs.Disconnect();
                 scs = new SimConnectSharp.SimConnectSharp();
-                scs.Connect();
-                var calculatedInterval = (int)(numericUpDown2.Value * ((radioButton3.Checked) ? 1000 : 20));
-                if (calculatedInterval == 0)
+                if (scs.Connect())
                 {
-                    calculatedInterval = (radioButton3.Checked) ? 1000 : 10;
+                    var calculatedInterval = (int)(numericUpDown2.Value * ((radioButton3.Checked) ? 1000 : 20));
+                    if (calculatedInterval == 0)
+                    {
+                        calculatedInterval = (radioButton3.Checked) ? 1000 : 10;
+                    }
+                    SimConnectSharp.SimConnectSharp.SC_PERIOD requestPeriod = SimConnectSharp.SimConnectSharp.SC_PERIOD.ONCE;
+                    if (radioButton1.Checked) requestPeriod = SimConnectSharp.SimConnectSharp.SC_PERIOD.VISUAL_FRAME;
+                    else if (radioButton2.Checked) requestPeriod = SimConnectSharp.SimConnectSharp.SC_PERIOD.SIM_FRAME;
+                    else if (radioButton3.Checked) requestPeriod = SimConnectSharp.SimConnectSharp.SC_PERIOD.SECOND;
+                    if (numericUpDown2.Value < 0) numericUpDown2.Value = 0;
+                    scs.SubscribeLocationData(requestPeriod, (uint)numericUpDown2.Value);
+                    timer1.Interval = calculatedInterval;
+                    timer1.Enabled = true;
+                    timer1.Start();
                 }
-                SimConnectSharp.SimConnectSharp.SC_PERIOD requestPeriod = SimConnectSharp.SimConnectSharp.SC_PERIOD.ONCE;
-                if (radioButton1.Checked) requestPeriod = SimConnectSharp.SimConnectSharp.SC_PERIOD.VISUAL_FRAME;
-                else if (radioButton2.Checked) requestPeriod = SimConnectSharp.SimConnectSharp.SC_PERIOD.SIM_FRAME;
-                else if (radioButton3.Checked) requestPeriod = SimConnectSharp.SimConnectSharp.SC_PERIOD.SECOND;
-                if (numericUpDown2.Value < 0) numericUpDown2.Value = 0;
-                scs.SubscribeLocationData(requestPeriod, (uint)numericUpDown2.Value);
-                timer1.Interval = calculatedInterval;
-                timer1.Enabled = true;
-                timer1.Start();
+                else
+                {
+                    MessageBox.Show("Couldn't connect to MSFS");
+                }
             }
         }
 
