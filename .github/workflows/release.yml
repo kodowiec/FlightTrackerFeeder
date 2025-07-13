@@ -1,0 +1,49 @@
+name: Release app on new tag
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+jobs:
+  build:
+    runs-on: windows-2022
+
+    env:
+      solution: ./FTF.Windows/FTF.Windows.sln
+      buildPlatform: x64
+      buildConfiguration: Debug
+      runs-on: 'windows-2022'
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+      with:
+        persist-credentials: true
+        submodules: recursive
+        fetch-depth: 0
+
+    # Add  MSBuild to the PATH: https://github.com/microsoft/setup-msbuild
+    - name: Setup MSBuild.exe
+      uses: microsoft/setup-msbuild@v1.0.2
+
+    - name: Setup nuget
+      uses: nuget/setup-nuget@v1
+
+    - name: Restore the application
+      run: msbuild ${{ env.solution }} /t:Restore /p:Configuration=${{ env.buildConfiguration }}
+
+    - name: nuget restore
+      run: nuget restore ${{ env.solution }}
+
+    - name: Build app
+      run: msbuild '${{ env.solution }}' /p:Platform='${{ env.buildPlatform }}' /restore /p:"Configuration=${{ env.buildConfiguration }}" /p:"OutDir=${{ github.workspace }}_buildOut"
+
+    - name: zip  build
+      shell: powershell
+      run: cd '${{ github.workspace }}_buildOut'; Compress-Archive * '${{ github.workspace }}/ftf_win-x64.zip'
+
+    - name: 'Create a GitHub release'
+      run: "gh release create \"${{ github.ref_name }}\" --title \"${{ github.ref_name }}\" --latest --generate-notes ${{ github.workspace }}/ftf_win-x64.zip"
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
