@@ -13,6 +13,8 @@ namespace FTF.Windows
         public string BaseUrl { get; set; }
         public string UserAgent { get; set; }
 
+        public string Token { get; set; }
+
         public AbstractHttpClient(string baseUrl)
         {
             this.BaseUrl = baseUrl;
@@ -39,34 +41,37 @@ namespace FTF.Windows
 
     internal class ApiClient : AbstractHttpClient
     {
-        private string password;
-
-        public ApiClient(string baseUrl, string password = "") : base(baseUrl)
+        private RestClient _client;
+        public ApiClient(string baseUrl, string token = "") : base(baseUrl)
         {
-            this.password = password;
+            this.AuthToken = token;
+            this._client = Client();
+            this._client.AddDefaultHeader("Authorization", $"Bearer {AuthToken}");
         }
 
         public RestResponse Connect()
         {
-            var client = Client();
             var request = new RestRequest("", Method.Get);
-            return client.Execute(request);
+            return this._client.Execute(request);
         }
 
         public RestResponse Authenticate()
         {
-            var client = Client();
-            var request = new RestRequest("auth", Method.Post);
-            request.AddParameter("password", this.password);
-            return client.Execute(request);
+            var request = new RestRequest("api/v1/auth-check/client", Method.Post);
+            return this._client.Execute(request);
         }
 
         public RestResponse Submit(SubmissionBody body)
         {
-            var client = Client();
             var request = new RestRequest("api/v1/position", Method.Post);
             request.AddJsonBody(Newtonsoft.Json.JsonConvert.SerializeObject(body));
-            return client.Execute(request);
+            return this._client.Execute(request);
+        }
+
+        public string AuthToken
+        {
+            get => this.Token;
+            set => this.Token = value;
         }
     }
 }

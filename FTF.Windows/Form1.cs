@@ -20,9 +20,14 @@ namespace FTF.Windows
         private void btn_ApiConnect_Click(object sender, EventArgs e)
         {
             this.apiClient = new ApiClient(tb_server.Text, tb_password.Text);
-            var connect = this.apiClient.Connect();
+            this.apiClient.Connect();
+            var connect = this.apiClient.Authenticate();
             ldata_ApiResponseOk.Text = connect.Content;
-            if (connect.IsSuccessStatusCode) btn_SubStart.Enabled = true; 
+            if (connect.IsSuccessStatusCode)
+            {
+                btn_SubStart.Enabled = true;
+                if (ldata_ApiResponseOk.Text.Trim().Length < 2) ldata_ApiResponseOk.Text = this.apiClient.Connect().Content;
+            }
         }
 
         private void btn_MsfsConnect_Click(object sender, EventArgs e)
@@ -158,6 +163,11 @@ namespace FTF.Windows
                 numericUpDown2.Enabled = false;
                 numericUpDown2.Value = 0;
             }
+        }
+
+        private void ldata_ApiResponseOk_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show(ldata_ApiResponseOk.Text);
         }
     }
 }
