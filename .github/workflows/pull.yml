@@ -1,0 +1,37 @@
+name: Build app on PR
+
+on:
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  build:
+    runs-on: windows-2022
+
+    env:
+      solution: ./FTF.Windows/FTF.Windows.sln
+      buildPlatform: x64
+      buildConfiguration: Debug
+      runs-on: 'windows-2022'
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+      with:
+        persist-credentials: true
+        submodules: recursive
+        fetch-depth: 0
+
+    # Add  MSBuild to the PATH: https://github.com/microsoft/setup-msbuild
+    - name: Setup MSBuild.exe
+      uses: microsoft/setup-msbuild@v1.0.2
+
+
+    - name: Build Client
+      run: msbuild '${{ env.solution }}' /p:Platform='${{ env.buildPlatform }}' /restore /p:"Configuration=${{ env.buildConfiguration }}" /p:"OutDir=${{ github.workspace }}_buildOut"
+
+    - name: Upload build as Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: client-build
+        path: ${{ github.workspace }}_buildOut/
