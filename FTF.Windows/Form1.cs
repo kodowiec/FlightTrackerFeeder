@@ -1,6 +1,8 @@
 ﻿using System;
-using System.Threading;
+using System.Configuration;
+using System.Linq;
 using System.Windows.Forms;
+using FTF.Windows.Properties;
 using SimConnectSharp;
 
 namespace FTF.Windows
@@ -12,11 +14,47 @@ namespace FTF.Windows
         private ApiClient apiClient;
         private DateTime lastsubmssion;
         private System.Threading.Timer submissionTimer;
+        private Configuration AppConfig = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
 
         public Form1()
         {
             InitializeComponent();
             timer1.Enabled = false;
+            if (AppConfig != null)
+            {
+                if (AppConfig.AppSettings.Settings.AllKeys.Contains("api_url"))
+                {
+                    tb_server.Text = AppConfig.AppSettings.Settings["api_url"].Value;
+                }
+                if (AppConfig.AppSettings.Settings.AllKeys.Contains("api_token"))
+                {
+                    tb_password.Text = AppConfig.AppSettings.Settings["api_token"].Value;
+                }
+                if (AppConfig.AppSettings.Settings.AllKeys.Contains("api_interval"))
+                {
+                    numericUpDown1.Value = int.Parse(AppConfig.AppSettings.Settings["api_interval"].Value);
+                }
+                if (AppConfig.AppSettings.Settings.AllKeys.Contains("msfs_interval"))
+                {
+                    checkBox1.Checked = true;
+                    numericUpDown2.Value = int.Parse(AppConfig.AppSettings.Settings["msfs_interval"].Value);
+                }
+                if (AppConfig.AppSettings.Settings.AllKeys.Contains("msfs_period"))
+                {
+                    switch (AppConfig.AppSettings.Settings["msfs_period"].Value)
+                    {
+                        case "VISUAL_FRAME":
+                            radioButton1.Checked = true; radioButton2.Checked = false; radioButton3.Checked = false;
+                            break;
+                        case "SIM_FRAME":
+                            radioButton1.Checked = false; radioButton2.Checked = true; radioButton3.Checked = false;
+                            break;
+                        case "SECOND":
+                            radioButton1.Checked = false; radioButton2.Checked = false; radioButton3.Checked = true;
+                            break;
+                    }
+                }
+            }
         }
 
         private void btn_ApiConnect_Click(object sender, EventArgs e)
@@ -182,6 +220,43 @@ namespace FTF.Windows
         private void ldata_ApiResponseOk_Click(object sender, EventArgs e)
         {
             MessageBox.Show(ldata_ApiResponseOk.Text);
+        }
+
+        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (checkBox1.Checked == false)
+            {
+                RemoveSetting("msfs_interval");
+            }
+            else
+            {
+                SaveSetting("msfs_interval", numericUpDown2.Value.ToString());
+            }
+
+            SaveSetting("api_url", tb_server.Text);
+            SaveSetting("api_token", tb_password.Text);
+            SaveSetting("api_interval", numericUpDown1.Value.ToString());
+            SaveSetting("msfs_period", ((radioButton1.Checked) ? "VISUAL_FRAME" : ((radioButton2.Checked) ? "SIM_FRAME" : "SECOND")));
+
+            AppConfig.Save(ConfigurationSaveMode.Full);
+        }
+
+
+        private void SaveSetting(string key, string value)
+        {
+            if (AppConfig.AppSettings.Settings[key] == null)
+            {
+                AppConfig.AppSettings.Settings.Add(key, value);
+            }
+            else
+            {
+                AppConfig.AppSettings.Settings[key].Value = value;
+            }
+        }
+
+        private void RemoveSetting(string key)
+        {
+            if (AppConfig.AppSettings.Settings[key] != null) AppConfig.AppSettings.Settings.Remove(key);
         }
     }
 }
