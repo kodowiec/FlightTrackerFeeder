@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Windows.Forms;
 using SimConnectSharp;
 
@@ -10,6 +11,7 @@ namespace FTF.Windows
         private SimConnectSharp.SimConnectSharp scs;
         private ApiClient apiClient;
         private DateTime lastsubmssion;
+        private System.Threading.Timer submissionTimer;
 
         public Form1()
         {
@@ -105,12 +107,19 @@ namespace FTF.Windows
                     $"Altitude: {lastLocationData.Altitude}" +
                     "\n" +
                     $"Kohlsmann: {lastLocationData.Kohlsmann}";
+            } else if (scs == null)
+            {
+                timer1.Stop();
+                timer1.Enabled = false;
+                submissionTimer.Dispose();
+                MessageBox.Show("SCS not connected; disabling.");
             }
         }
 
-        private void timer2_Tick(object sender, EventArgs e)
+        private void SubmitLocationData(object data)
         {
-            var submit = apiClient.Submit(new SubmissionBody {
+            var submit = apiClient.Submit(new SubmissionBody
+            {
                 callsign = tb_Callsign.Text,
                 latitude = lastLocationData.Latitude,
                 longitude = lastLocationData.Longitude
@@ -118,13 +127,21 @@ namespace FTF.Windows
             if (submit.IsSuccessStatusCode)
             {
                 lastsubmssion = DateTime.Now;
-                ldata_LastSubmitted.Text = "D: " + DateTime.Now;
+                if (ldata_LastSubmitted.InvokeRequired)
+                {
+                    ldata_LastSubmitted.Invoke((MethodInvoker)(() =>
+                    {
+                        ldata_LastSubmitted.Text = "D: " + DateTime.Now;
+                    }));
+                } else
+                {
+                    ldata_LastSubmitted.Text = "D: " + DateTime.Now;
+                }
             }
             else
             {
+                submissionTimer.Dispose();
                 MessageBox.Show(submit.Content);
-                timer2.Stop();
-                timer2.Enabled = false;
                 btn_SubStart.Enabled = true;
                 btn_SubStop.Enabled = false;
                 tb_Callsign.Enabled = true;
@@ -138,15 +155,12 @@ namespace FTF.Windows
             btn_SubStop.Enabled = true;
             tb_Callsign.Enabled = false;
             numericUpDown1.Enabled = false;
-            timer2.Interval = (int)numericUpDown1.Value;
-            timer2.Enabled = true;
-            timer2.Start();
+            submissionTimer = new System.Threading.Timer(SubmitLocationData, null, 0, (int)numericUpDown1.Value);
         }
 
         private void btn_SubStop_Click(object sender, EventArgs e)
         {
-            timer2.Stop();
-            timer2.Enabled = false;
+            submissionTimer.Dispose();
             btn_SubStart.Enabled = true;
             btn_SubStop.Enabled = false;
             tb_Callsign.Enabled = true;
