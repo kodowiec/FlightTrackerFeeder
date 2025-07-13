@@ -26,6 +26,8 @@ jobs:
     - name: Setup MSBuild.exe
       uses: microsoft/setup-msbuild@v1.0.2
 
+    - name: Restore the application
+      run: msbuild ${{ env.solution }} /t:Restore /p:Configuration=${{ env.buildConfiguration }}
 
     - name: Build Client
       run: msbuild '${{ env.solution }}' /p:Platform='${{ env.buildPlatform }}' /restore /p:"Configuration=${{ env.buildConfiguration }}" /p:"OutDir=${{ github.workspace }}_buildOut"
