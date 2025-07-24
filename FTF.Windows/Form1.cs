@@ -16,6 +16,8 @@ namespace FTF.Windows
         private System.Threading.Timer submissionTimer;
         private Configuration AppConfig = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
 
+        private int retryCount = 0;
+
         public Form1()
         {
             InitializeComponent();
@@ -175,15 +177,41 @@ namespace FTF.Windows
                 {
                     ldata_LastSubmitted.Text = "D: " + DateTime.Now;
                 }
+                retryCount = 0;
             }
             else
             {
-                submissionTimer.Dispose();
-                MessageBox.Show(submit.Content);
-                btn_SubStart.Enabled = true;
-                btn_SubStop.Enabled = false;
-                tb_Callsign.Enabled = true;
-                numericUpDown1.Enabled = true;
+                if (retryCount > 10)
+                {
+                    submissionTimer.Dispose();
+                    retryCount = 0;
+                    if (this.InvokeRequired)
+                    {
+                        this.Invoke((MethodInvoker)(() => {
+                            this.BringToFront();
+                            this.TopMost = true;
+                            btn_SubStart.Enabled = true;
+                            btn_SubStop.Enabled = false;
+                            tb_Callsign.Enabled = true;
+                            numericUpDown1.Enabled = true;
+                            System.Threading.Thread.Sleep(100);
+                            this.TopMost = false;
+                            MessageBox.Show($"Error submitting data.\nError message: {submit.ErrorMessage}\nException: {submit.ErrorException}");
+                        }));
+                    } else
+                    {
+                        this.BringToFront();
+                        this.TopMost = true;
+                        btn_SubStart.Enabled = true;
+                        btn_SubStop.Enabled = false;
+                        tb_Callsign.Enabled = true;
+                        numericUpDown1.Enabled = true;
+                        System.Threading.Thread.Sleep(100);
+                        this.TopMost = false;
+                        MessageBox.Show($"Error submitting data.\nError message: {submit.ErrorMessage}\nException: {submit.ErrorException}");
+                    }
+                }
+                retryCount++;
             }
         }
 
