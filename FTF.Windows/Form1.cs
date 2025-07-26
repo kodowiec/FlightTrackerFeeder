@@ -9,7 +9,7 @@ namespace FTF.Windows
 {
     public partial class Form1 : Form
     {
-        private LocationData lastLocationData = new LocationData();
+        private SimConnectSharp.AircraftData lastLocationData = new SimConnectSharp.AircraftData();
         private SimConnectSharp.SimConnectSharp scs;
         private ApiClient apiClient;
         private DateTime lastsubmssion;
@@ -132,21 +132,11 @@ namespace FTF.Windows
 
         private void timer1_Tick(object sender, EventArgs e)
         {
-            LocationData scslld = scs.LastLocationData;
+            SimConnectSharp.AircraftData scslld = scs.LastLocationData;
             if (scslld != null && !scslld.Equals(lastLocationData))
             {
                 lastLocationData = scslld;
-                richTextBox1.Text = DateTime.Now + 
-                    "\n" + 
-                    $"Title: {lastLocationData.Title}" +
-                    "\n" +
-                    $"Latitude: {lastLocationData.Latitude}" +
-                    "\n" +
-                    $"Longitude: {lastLocationData.Longitude}" +
-                    "\n" +
-                    $"Altitude: {lastLocationData.Altitude}" +
-                    "\n" +
-                    $"Kohlsmann: {lastLocationData.Kohlsmann}";
+                richTextBox1.Text = DateTime.Now + "\n" + lastLocationData.ToString(true);
             } else if (scs == null)
             {
                 timer1.Stop();
@@ -158,24 +148,36 @@ namespace FTF.Windows
 
         private void SubmitLocationData(object data)
         {
-            var submit = apiClient.Submit(new SubmissionBody
+            DateTime now = DateTime.UtcNow;
+            var submit = apiClient.Submit(new AircraftData
             {
+                generatedDate = now.ToString("yyyy/MM/dd"),
+                generatedTime = now.ToString("HH:mm:ss"),
                 callsign = tb_Callsign.Text,
                 latitude = lastLocationData.Latitude,
-                longitude = lastLocationData.Longitude
+                longitude = lastLocationData.Longitude,
+                altitude = lastLocationData.Altitude,
+                squawk = lastLocationData.TransponderCode.ToString("D4"),
+                groundSpeed = lastLocationData.GpsGroundSpeed,
+                track = lastLocationData.MagneticCompass,
+                alert = false,
+                emergency = (lastLocationData.TransponderCode == 7500 || lastLocationData.TransponderCode == 7600 || lastLocationData.TransponderCode == 7700),
+                spi = false,
+                isOnGround = lastLocationData.ContactPointIsOnGround,
             });
+      
             if (submit.IsSuccessStatusCode)
             {
-                lastsubmssion = DateTime.Now;
+                lastsubmssion = now;
                 if (ldata_LastSubmitted.InvokeRequired)
                 {
                     ldata_LastSubmitted.Invoke((MethodInvoker)(() =>
                     {
-                        ldata_LastSubmitted.Text = "D: " + DateTime.Now;
+                        ldata_LastSubmitted.Text = "D: " + now;
                     }));
                 } else
                 {
-                    ldata_LastSubmitted.Text = "D: " + DateTime.Now;
+                    ldata_LastSubmitted.Text = "D: " + now;
                 }
                 retryCount = 0;
             }

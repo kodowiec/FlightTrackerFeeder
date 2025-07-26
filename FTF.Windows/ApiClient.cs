@@ -2,12 +2,6 @@
 
 namespace FTF.Windows
 {
-    public class SubmissionBody
-    {
-        public string callsign { get; set; }
-        public double latitude { get; set; }
-        public double longitude { get; set; }
-    }
     public abstract class AbstractHttpClient
     {
         public string BaseUrl { get; set; }
@@ -61,7 +55,7 @@ namespace FTF.Windows
             return this._client.Execute(request);
         }
 
-        public RestResponse Submit(SubmissionBody body)
+        public RestResponse Submit(AircraftData body)
         {
             var request = new RestRequest("api/v1/position", Method.Post);
             request.AddJsonBody(Newtonsoft.Json.JsonConvert.SerializeObject(body));
