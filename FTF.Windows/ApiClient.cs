@@ -1,4 +1,5 @@
 ﻿using RestSharp;
+using System.Security.Policy;
 
 namespace FTF.Windows
 {
@@ -11,11 +12,13 @@ namespace FTF.Windows
 
         public AbstractHttpClient(string baseUrl)
         {
+            if (!baseUrl.StartsWith("http")) baseUrl = "https://" + baseUrl;
             this.BaseUrl = baseUrl;
         }
 
         public virtual void SetBaseUrl(string url)
         {
+            if (!url.StartsWith("http")) url = "https://" + url;
             BaseUrl = url;
         }
 
