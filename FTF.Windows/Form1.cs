@@ -386,5 +386,10 @@ var rows = dataGridView1.Rows.Cast<DataGridViewRow>().ToList();
             dataGridView1.Visible = cb_FieldMapping.Checked;
             dataGridView1.Enabled = cb_FieldMapping.Checked;
         }
+
+        private void cb_KeepOnTop_CheckedChanged(object sender, EventArgs e)
+        {
+            this.TopMost = cb_KeepOnTop.Checked;
+        }
     }
 }
