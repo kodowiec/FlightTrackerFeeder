@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
+using System.Reflection;
 using System.Windows.Forms;
 using FTF.Windows.Properties;
 using SimConnectSharp;
@@ -16,7 +18,12 @@ namespace FTF.Windows
         private System.Threading.Timer submissionTimer;
         private Configuration AppConfig = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
 
+        private List<string> AvailableMsfsVariables = new List<string>();
+
         private int retryCount = 0;
+
+        PropertyInfo[] simConnectProps = typeof(SimConnectSharp.AircraftData).GetProperties();
+        PropertyInfo[] aircraftDataProps = typeof(AircraftData).GetProperties();
 
         public Form1()
         {
@@ -149,22 +156,73 @@ namespace FTF.Windows
         private void SubmitLocationData(object data)
         {
             DateTime now = DateTime.UtcNow;
-            var submit = apiClient.Submit(new AircraftData
+            RestSharp.RestResponse submit = null;
+            
+            if (!cb_FieldMapping.Checked)
             {
-                generatedDate = now.ToString("yyyy/MM/dd"),
-                generatedTime = now.ToString("HH:mm:ss"),
-                callsign = tb_Callsign.Text,
-                latitude = lastLocationData.Latitude,
-                longitude = lastLocationData.Longitude,
-                altitude = lastLocationData.Altitude,
-                squawk = lastLocationData.TransponderCode.ToString("D4"),
-                groundSpeed = lastLocationData.GpsGroundSpeed,
-                track = lastLocationData.MagneticCompass,
-                alert = false,
-                emergency = (lastLocationData.TransponderCode == 7500 || lastLocationData.TransponderCode == 7600 || lastLocationData.TransponderCode == 7700),
-                spi = false,
-                isOnGround = lastLocationData.ContactPointIsOnGround,
-            });
+                submit = apiClient.Submit(new AircraftData
+                {
+                    generatedDate = now.ToString("yyyy/MM/dd"),
+                    generatedTime = now.ToString("HH:mm:ss"),
+                    callsign = tb_Callsign.Text,
+                    latitude = lastLocationData.Latitude,
+                    longitude = lastLocationData.Longitude,
+                    altitude = lastLocationData.Altitude,
+                    squawk = lastLocationData.TransponderCode.ToString("D4"),
+                    groundSpeed = lastLocationData.GpsGroundSpeed,
+                    track = lastLocationData.MagneticCompass,
+                    alert = false,
+                    emergency = (lastLocationData.TransponderCode == 7500 || lastLocationData.TransponderCode == 7600 || lastLocationData.TransponderCode == 7700),
+                    spi = false,
+                    isOnGround = lastLocationData.ContactPointIsOnGround,
+                });
+            } else
+            {
+var rows = dataGridView1.Rows.Cast<DataGridViewRow>().ToList();
+                AircraftData submitBody = new AircraftData
+                {
+                    generatedDate = now.ToString("yyyy/MM/dd"),
+                    generatedTime = now.ToString("HH:mm:ss"),
+                    callsign = tb_Callsign.Text,
+
+                    alert = false,
+                    emergency = false,
+                    spi = false,
+                };
+
+                foreach (PropertyInfo property in aircraftDataProps)
+                {
+                    var attribute = property.GetCustomAttribute<ADA>();
+                    if (attribute.IsMappable)
+                    {
+                        var matchingRow = rows.FirstOrDefault(row =>
+                            row.Tag is string tag &&
+                            tag == property.Name &&
+                            row.Cells[0].Value is string cellValue &&
+                            cellValue == property.Name);
+
+                        if (matchingRow == null) continue;
+
+                        var simVarName = matchingRow.Cells[1].Value?.ToString();
+                        if (string.IsNullOrWhiteSpace(simVarName)) continue;
+
+                        var simVarProp = simConnectProps.FirstOrDefault(p =>
+                            p.GetCustomAttributes(typeof(SimConnectVariable), false)
+                             .Cast<SimConnectVariable>()
+                             .Any(attr => attr.SimVarName == simVarName));
+
+                        if (simVarProp == null) continue;
+
+                        var simVarData = simVarProp.GetValue(lastLocationData);
+                        property.SetValue(submitBody, simVarData);
+                    }
+                }
+
+                submitBody.emergency = (submitBody.squawk == "7500" || submitBody.squawk == "7600" || submitBody.squawk == "7700");
+
+                submit = apiClient.Submit(submitBody);
+            }
+
       
             if (submit.IsSuccessStatusCode)
             {
@@ -287,6 +345,47 @@ namespace FTF.Windows
         private void RemoveSetting(string key)
         {
             if (AppConfig.AppSettings.Settings[key] != null) AppConfig.AppSettings.Settings.Remove(key);
+        }
+
+        private void btn_fieldMapping_Click(object sender, EventArgs e)
+        {
+            this.Width = (this.Width > 660) ? 660 : 1000;
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            foreach (PropertyInfo property in typeof(SimConnectSharp.AircraftData).GetProperties())
+            {
+                var attribute = property.GetCustomAttribute<SimConnectVariable>();
+                AvailableMsfsVariables.Add(attribute.SimVarName);
+            }
+
+            using (DataGridViewComboBoxColumn column = dataGridView1.Columns[1] as DataGridViewComboBoxColumn)
+            {
+                column.DataSource = AvailableMsfsVariables;
+            }
+
+            foreach (PropertyInfo property in typeof(AircraftData).GetProperties())
+            {
+                var attribute = property.GetCustomAttribute<ADA>();
+                if (attribute.IsMappable)
+                {
+                    var id = dataGridView1.Rows.Add();
+                    using (DataGridViewRow row = dataGridView1.Rows[id])
+                    {
+                        row.Tag = property.Name;
+                        row.Cells[0].Value = property.Name;
+                        (row.Cells[1] as DataGridViewComboBoxCell).Value = attribute.DefSimvar;
+                    }
+                }
+            }
+
+        }
+
+        private void cb_FieldMapping_CheckedChanged(object sender, EventArgs e)
+        {
+            dataGridView1.Visible = cb_FieldMapping.Checked;
+            dataGridView1.Enabled = cb_FieldMapping.Checked;
         }
     }
 }
