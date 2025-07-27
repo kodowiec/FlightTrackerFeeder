@@ -6,9 +6,7 @@
         [ADA(false)]
         public string callsign { get; set; }
         [ADA(false)]
-        public string generatedDate { get; set; } // YYYY/MM/DD
-        [ADA(false)]
-        public string generatedTime { get; set; } // HH:MM:SS
+        public string date { get; set; } // YYYY/MM/DD
 
         [ADA(true, "PLANE LATITUDE")]
         public double latitude { get; set; }

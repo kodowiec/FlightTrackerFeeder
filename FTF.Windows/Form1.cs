@@ -162,8 +162,7 @@ namespace FTF.Windows
             {
                 submit = apiClient.Submit(new AircraftData
                 {
-                    generatedDate = now.ToString("yyyy/MM/dd"),
-                    generatedTime = now.ToString("HH:mm:ss"),
+                    date = now.ToString("O"),
                     callsign = tb_Callsign.Text,
                     latitude = lastLocationData.Latitude,
                     longitude = lastLocationData.Longitude,
@@ -181,8 +180,7 @@ namespace FTF.Windows
 var rows = dataGridView1.Rows.Cast<DataGridViewRow>().ToList();
                 AircraftData submitBody = new AircraftData
                 {
-                    generatedDate = now.ToString("yyyy/MM/dd"),
-                    generatedTime = now.ToString("HH:mm:ss"),
+                    date = now.ToString("O"),
                     callsign = tb_Callsign.Text,
 
                     alert = false,
