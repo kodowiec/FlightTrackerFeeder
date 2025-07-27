@@ -143,7 +143,7 @@ namespace FTF.Windows
             if (scslld != null && !scslld.Equals(lastLocationData))
             {
                 lastLocationData = scslld;
-                richTextBox1.Text = DateTime.Now + "\n" + lastLocationData.ToString(true);
+                richTextBox1.Text = DateTime.Now + " \n" + lastLocationData.ToString(true).TrimEnd();
             } else if (scs == null)
             {
                 timer1.Stop();
@@ -349,7 +349,7 @@ var rows = dataGridView1.Rows.Cast<DataGridViewRow>().ToList();
 
         private void btn_fieldMapping_Click(object sender, EventArgs e)
         {
-            this.Width = (this.Width > 660) ? 660 : 1000;
+            this.Width = (this.Width > 700) ? 700 : 1040;
         }
 
         private void Form1_Load(object sender, EventArgs e)

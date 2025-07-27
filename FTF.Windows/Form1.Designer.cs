@@ -78,7 +78,7 @@
             this.groupBox1.Controls.Add(this.label2);
             this.groupBox1.Controls.Add(this.tb_password);
             this.groupBox1.Controls.Add(this.label1);
-            this.groupBox1.Location = new System.Drawing.Point(325, 12);
+            this.groupBox1.Location = new System.Drawing.Point(365, 12);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(307, 147);
             this.groupBox1.TabIndex = 0;
@@ -150,7 +150,7 @@
             this.groupBox2.Controls.Add(this.btn_MsfsConnect);
             this.groupBox2.Location = new System.Drawing.Point(12, 12);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(307, 259);
+            this.groupBox2.Size = new System.Drawing.Size(345, 259);
             this.groupBox2.TabIndex = 1;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "MSFS";
@@ -158,7 +158,7 @@
             // numericUpDown2
             // 
             this.numericUpDown2.Enabled = false;
-            this.numericUpDown2.Location = new System.Drawing.Point(170, 167);
+            this.numericUpDown2.Location = new System.Drawing.Point(153, 44);
             this.numericUpDown2.Maximum = new decimal(new int[] {
             1000,
             0,
@@ -171,7 +171,7 @@
             // checkBox1
             // 
             this.checkBox1.AutoSize = true;
-            this.checkBox1.Location = new System.Drawing.Point(152, 146);
+            this.checkBox1.Location = new System.Drawing.Point(6, 45);
             this.checkBox1.Name = "checkBox1";
             this.checkBox1.Size = new System.Drawing.Size(141, 17);
             this.checkBox1.TabIndex = 8;
@@ -182,7 +182,7 @@
             // radioButton3
             // 
             this.radioButton3.AutoSize = true;
-            this.radioButton3.Location = new System.Drawing.Point(9, 200);
+            this.radioButton3.Location = new System.Drawing.Point(278, 17);
             this.radioButton3.Name = "radioButton3";
             this.radioButton3.Size = new System.Drawing.Size(62, 17);
             this.radioButton3.TabIndex = 7;
@@ -192,7 +192,7 @@
             // radioButton2
             // 
             this.radioButton2.AutoSize = true;
-            this.radioButton2.Location = new System.Drawing.Point(9, 177);
+            this.radioButton2.Location = new System.Drawing.Point(174, 17);
             this.radioButton2.Name = "radioButton2";
             this.radioButton2.Size = new System.Drawing.Size(105, 17);
             this.radioButton2.TabIndex = 6;
@@ -203,7 +203,7 @@
             // 
             this.radioButton1.AutoSize = true;
             this.radioButton1.Checked = true;
-            this.radioButton1.Location = new System.Drawing.Point(9, 154);
+            this.radioButton1.Location = new System.Drawing.Point(85, 17);
             this.radioButton1.Name = "radioButton1";
             this.radioButton1.Size = new System.Drawing.Size(85, 17);
             this.radioButton1.TabIndex = 5;
@@ -214,7 +214,7 @@
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(10, 135);
+            this.label6.Location = new System.Drawing.Point(3, 19);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(76, 13);
             this.label6.TabIndex = 4;
@@ -222,20 +222,20 @@
             // 
             // richTextBox1
             // 
-            this.richTextBox1.Location = new System.Drawing.Point(9, 23);
+            this.richTextBox1.Location = new System.Drawing.Point(6, 72);
             this.richTextBox1.Name = "richTextBox1";
             this.richTextBox1.ReadOnly = true;
-            this.richTextBox1.Size = new System.Drawing.Size(284, 96);
+            this.richTextBox1.Size = new System.Drawing.Size(334, 181);
             this.richTextBox1.TabIndex = 3;
             this.richTextBox1.Text = "";
             // 
             // btn_MsfsConnect
             // 
-            this.btn_MsfsConnect.Location = new System.Drawing.Point(184, 227);
+            this.btn_MsfsConnect.Location = new System.Drawing.Point(271, 43);
             this.btn_MsfsConnect.Name = "btn_MsfsConnect";
-            this.btn_MsfsConnect.Size = new System.Drawing.Size(109, 23);
+            this.btn_MsfsConnect.Size = new System.Drawing.Size(67, 23);
             this.btn_MsfsConnect.TabIndex = 2;
-            this.btn_MsfsConnect.Text = "Connect to MSFS";
+            this.btn_MsfsConnect.Text = "Connect";
             this.btn_MsfsConnect.UseVisualStyleBackColor = true;
             this.btn_MsfsConnect.Click += new System.EventHandler(this.btn_MsfsConnect_Click);
             // 
@@ -250,7 +250,7 @@
             this.groupBox3.Controls.Add(this.btn_SubStop);
             this.groupBox3.Controls.Add(this.ldata_LastSubmitted);
             this.groupBox3.Controls.Add(this.label3);
-            this.groupBox3.Location = new System.Drawing.Point(325, 179);
+            this.groupBox3.Location = new System.Drawing.Point(365, 179);
             this.groupBox3.Name = "groupBox3";
             this.groupBox3.Size = new System.Drawing.Size(307, 92);
             this.groupBox3.TabIndex = 2;
@@ -356,7 +356,7 @@
             // 
             this.groupBox4.Controls.Add(this.cb_FieldMapping);
             this.groupBox4.Controls.Add(this.dataGridView1);
-            this.groupBox4.Location = new System.Drawing.Point(649, 12);
+            this.groupBox4.Location = new System.Drawing.Point(690, 12);
             this.groupBox4.Name = "groupBox4";
             this.groupBox4.Size = new System.Drawing.Size(323, 259);
             this.groupBox4.TabIndex = 3;
@@ -408,7 +408,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(644, 281);
+            this.ClientSize = new System.Drawing.Size(684, 281);
             this.Controls.Add(this.groupBox4);
             this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.groupBox2);
