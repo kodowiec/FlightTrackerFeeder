@@ -61,6 +61,7 @@
             this.API = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.MSFS = new System.Windows.Forms.DataGridViewComboBoxColumn();
             this.cb_FieldMapping = new System.Windows.Forms.CheckBox();
+            this.cb_KeepOnTop = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown2)).BeginInit();
@@ -140,6 +141,7 @@
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.cb_KeepOnTop);
             this.groupBox2.Controls.Add(this.numericUpDown2);
             this.groupBox2.Controls.Add(this.checkBox1);
             this.groupBox2.Controls.Add(this.radioButton3);
@@ -222,16 +224,16 @@
             // 
             // richTextBox1
             // 
-            this.richTextBox1.Location = new System.Drawing.Point(6, 72);
+            this.richTextBox1.Location = new System.Drawing.Point(6, 86);
             this.richTextBox1.Name = "richTextBox1";
             this.richTextBox1.ReadOnly = true;
-            this.richTextBox1.Size = new System.Drawing.Size(334, 181);
+            this.richTextBox1.Size = new System.Drawing.Size(334, 171);
             this.richTextBox1.TabIndex = 3;
             this.richTextBox1.Text = "";
             // 
             // btn_MsfsConnect
             // 
-            this.btn_MsfsConnect.Location = new System.Drawing.Point(271, 43);
+            this.btn_MsfsConnect.Location = new System.Drawing.Point(272, 61);
             this.btn_MsfsConnect.Name = "btn_MsfsConnect";
             this.btn_MsfsConnect.Size = new System.Drawing.Size(67, 23);
             this.btn_MsfsConnect.TabIndex = 2;
@@ -404,6 +406,17 @@
             this.cb_FieldMapping.UseVisualStyleBackColor = true;
             this.cb_FieldMapping.CheckedChanged += new System.EventHandler(this.cb_FieldMapping_CheckedChanged);
             // 
+            // cb_KeepOnTop
+            // 
+            this.cb_KeepOnTop.AutoSize = true;
+            this.cb_KeepOnTop.Location = new System.Drawing.Point(6, 63);
+            this.cb_KeepOnTop.Name = "cb_KeepOnTop";
+            this.cb_KeepOnTop.Size = new System.Drawing.Size(84, 17);
+            this.cb_KeepOnTop.TabIndex = 10;
+            this.cb_KeepOnTop.Text = "Keep on top";
+            this.cb_KeepOnTop.UseVisualStyleBackColor = true;
+            this.cb_KeepOnTop.CheckedChanged += new System.EventHandler(this.cb_KeepOnTop_CheckedChanged);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -466,6 +479,7 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn API;
         private System.Windows.Forms.DataGridViewComboBoxColumn MSFS;
         private System.Windows.Forms.CheckBox cb_FieldMapping;
+        private System.Windows.Forms.CheckBox cb_KeepOnTop;
     }
 }
 
