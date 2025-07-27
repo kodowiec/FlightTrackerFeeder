@@ -146,6 +146,24 @@ namespace FTF.Windows
                 richTextBox1.Text = DateTime.Now + " \n" + lastLocationData.ToString(true).TrimEnd();
             } else if (scs == null)
             {
+                if (this.InvokeRequired)
+                {
+                    this.Invoke((MethodInvoker)(() => {
+                        this.BringToFront();
+                        this.TopMost = true;
+                        System.Threading.Thread.Sleep(100);
+                        this.TopMost = false;
+                        MessageBox.Show($"Lost connection to MSFS");
+                    }));
+                }
+                else
+                {
+                    this.BringToFront();
+                    this.TopMost = true;
+                    System.Threading.Thread.Sleep(100);
+                    this.TopMost = false;
+                    MessageBox.Show($"Lost connection to MSFS");
+                }
                 timer1.Stop();
                 timer1.Enabled = false;
                 submissionTimer.Dispose();
