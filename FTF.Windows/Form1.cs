@@ -212,7 +212,8 @@ var rows = dataGridView1.Rows.Cast<DataGridViewRow>().ToList();
                         if (simVarProp == null) continue;
 
                         var simVarData = simVarProp.GetValue(lastLocationData);
-                        property.SetValue(submitBody, simVarData);
+                        if (property.PropertyType == typeof(string)) property.SetValue(submitBody, ((simVarData.GetType() == typeof(int))? ((int)simVarData).ToString("D4") : simVarData.ToString()));
+                        else property.SetValue(submitBody, simVarData);
                     }
                 }
 
@@ -254,7 +255,7 @@ var rows = dataGridView1.Rows.Cast<DataGridViewRow>().ToList();
                             numericUpDown1.Enabled = true;
                             System.Threading.Thread.Sleep(100);
                             this.TopMost = false;
-                            MessageBox.Show($"Error submitting data.\nError message: {submit.ErrorMessage}\nException: {submit.ErrorException}");
+                            MessageBox.Show($"Error submitting data.\nError message: {submit.ErrorMessage}\n{submit.Content}\nException: {submit.ErrorException}\nRequest: {submit.Request}");
                         }));
                     } else
                     {
@@ -266,7 +267,7 @@ var rows = dataGridView1.Rows.Cast<DataGridViewRow>().ToList();
                         numericUpDown1.Enabled = true;
                         System.Threading.Thread.Sleep(100);
                         this.TopMost = false;
-                        MessageBox.Show($"Error submitting data.\nError message: {submit.ErrorMessage}\nException: {submit.ErrorException}");
+                        MessageBox.Show($"Error submitting data.\nError message: {submit.ErrorMessage}\nException: {submit.ErrorException}\nRequest: {submit.Request}");
                     }
                 }
                 retryCount++;
